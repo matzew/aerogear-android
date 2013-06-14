@@ -16,6 +16,7 @@
  */
 package org.jboss.aerogear.android.unifiedpush;
 
+import android.media.RingtoneManager;
 import org.jboss.aerogear.R;
 
 import android.app.Activity;
@@ -28,15 +29,13 @@ import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-
 public class AGPushMessageReceiver  extends BroadcastReceiver {
 
-    
-    static final String TAG = "GCMDemo";
     public static final int NOTIFICATION_ID = 1;
+
     private NotificationManager mNotificationManager;
-    NotificationCompat.Builder builder;
-    Context ctx;
+    private Context ctx;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
@@ -45,8 +44,7 @@ public class AGPushMessageReceiver  extends BroadcastReceiver {
         if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
             sendNotification("Send error: " + intent.getExtras().toString());
         } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-            sendNotification("Deleted messages on server: " +
-                    intent.getExtras().toString());
+            sendNotification("Deleted messages on server: " + intent.getExtras().toString());
         } else {
             sendNotification("Received: " + intent.getExtras().toString());
         }
@@ -55,19 +53,19 @@ public class AGPushMessageReceiver  extends BroadcastReceiver {
 
     // Put the GCM message into a notification and post it.
     private void sendNotification(String msg) {
-        mNotificationManager = (NotificationManager)
-                ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(ctx)
-        .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
-        .setContentTitle("GCM Notification")
-        .setStyle(new NotificationCompat.BigTextStyle()
-        .bigText(msg))
-        .setContentText(msg);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx)
+                // TODO Configurable title
+                .setContentTitle("GCM Notification")
+                // TODO Configurable icon
+                .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
+                // TODO Configurable sound?
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+                .setContentText(msg);
 
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-        
 }
