@@ -100,6 +100,7 @@
                         <debug>${debug}</debug>
                     </run>
                     <sdk>
+                        <path>/home/summers/Programs/android-sdk-linux</path>
                     </sdk>
                     <emulator>
                         <avd>${android.avd}</avd>

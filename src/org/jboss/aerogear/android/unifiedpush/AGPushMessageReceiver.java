@@ -21,7 +21,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.jboss.aerogear.R;
@@ -35,16 +35,9 @@ public class AGPushMessageReceiver  extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-        ctx = context;
-        String messageType = gcm.getMessageType(intent);
-        if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-            sendNotification("Send error: " + intent.getExtras().toString());
-        } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-            sendNotification("Deleted messages on server: " + intent.getExtras().toString());
-        } else {
-            sendNotification(intent.getStringExtra("alert"));
-        }
+        Intent i = new Intent(context, AGMessageIntentService.class);
+        i.fillIn(intent, Intent.FILL_IN_DATA);
+        context.startService(i);
         setResultCode(Activity.RESULT_OK);
     }
 
