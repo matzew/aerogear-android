@@ -20,10 +20,6 @@
  */
 package org.jboss.aerogear.android.unifiedpush;
 
-/**
- *
- * @author Summers Pittman secondsun@gmail.com
- */
 public class PushUtils {
     
 }
