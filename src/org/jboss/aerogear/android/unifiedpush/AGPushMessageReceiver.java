@@ -16,18 +16,15 @@
  */
 package org.jboss.aerogear.android.unifiedpush;
 
-import android.media.RingtoneManager;
-import org.jboss.aerogear.R;
-
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import org.jboss.aerogear.R;
 
 public class AGPushMessageReceiver  extends BroadcastReceiver {
 
@@ -46,7 +43,7 @@ public class AGPushMessageReceiver  extends BroadcastReceiver {
         } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
             sendNotification("Deleted messages on server: " + intent.getExtras().toString());
         } else {
-            sendNotification("Received: " + intent.getExtras().toString());
+            sendNotification(intent.getStringExtra("alert"));
         }
         setResultCode(Activity.RESULT_OK);
     }
@@ -60,7 +57,7 @@ public class AGPushMessageReceiver  extends BroadcastReceiver {
                 .setContentTitle("GCM Notification")
                 // TODO Configurable icon
                 .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
-                // TODO Configurable sound?
+                // TODO Change to received sound
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                 .setContentText(msg);
