@@ -43,9 +43,6 @@ Edit the pom.xml file commenting following modules:
 
 	<!-- <module>analytics</module> -->
 	<!-- <module>admob</module> -->
-	<!-- <module>google-play-services</module> -->
-
-
 
 Now Maven will be able to include Android 4.1 as a dependency.  There are also profiles for other version of Android.
 
