@@ -20,16 +20,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+public class AGPushMessageReceiver extends BroadcastReceiver {
 
-public class AGPushMessageReceiver  extends BroadcastReceiver {
+	public static final int NOTIFICATION_ID = 1;
+	public static Intent configIntent;
 
-    public static final int NOTIFICATION_ID = 1;
-    public static Intent configIntent;
-    
-    Context ctx;
-    @Override
-    public void onReceive(Context context, Intent intent) {
-    	Registrar.notifyHandlers(context, intent);
-    }
-        
+	Context ctx;
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		Registrar.notifyHandlers(context, intent);
+	}
+
 }

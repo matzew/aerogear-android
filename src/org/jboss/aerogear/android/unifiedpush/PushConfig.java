@@ -16,184 +16,183 @@
  */
 package org.jboss.aerogear.android.unifiedpush;
 
+import java.io.Serializable;
+
 import android.content.BroadcastReceiver;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.Serializable;
 
 public class PushConfig implements Serializable {
-    
+
 	private static final long serialVersionUID = 1L;
-	
+
 	private String deviceToken;
-    private String mobileVariantId;
-    private String deviceType = "ANDROID";
-    private String mobileOperatingSystem = "android";
-    private String osVersion = android.os.Build.VERSION.RELEASE;
-    private String alias;
-    private String category;
-    private Class<? extends BroadcastReceiver> broadCastReceiver = AGPushMessageReceiver.class;
-    private Object[] broadCastReceiverParams;
-    
-    public final ImmutableSet<String> senderIds;
-    
-    public PushConfig(String... senderId) {
-        senderIds = ImmutableSet.copyOf(senderId);
-    }
-    
-    /**
-     * The device token Identifies the device within its Push Network.
-     * It is the value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
-     */
-    public String getDeviceToken() {
-        return deviceToken;
-    }
+	private String mobileVariantId;
+	private String deviceType = "ANDROID";
+	private String mobileOperatingSystem = "android";
+	private String osVersion = android.os.Build.VERSION.RELEASE;
+	private String alias;
+	private String category;
+	private Class<? extends BroadcastReceiver> broadCastReceiver = AGPushMessageReceiver.class;
+	private Object[] broadCastReceiverParams;
 
-    /**
-     * The device token Identifies the device within its Push Network.
-     * It is the value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
-     */
-    public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
-    }
+	public final ImmutableSet<String> senderIds;
 
-    /**
-     * Mobile variant id is the id of the application in Aerogear Push service.
-     */ 
-    public String getMobileVariantId() {
-        return mobileVariantId;
-    }
+	public PushConfig(String... senderId) {
+		senderIds = ImmutableSet.copyOf(senderId);
+	}
 
-    /**
-     * Mobile variant id is the id of the application in Aerogear Push service.
-     */ 
-    public void setMobileVariantId(String mobileVariantId) {
-        this.mobileVariantId = mobileVariantId;
-    }
+	/**
+	 * The device token Identifies the device within its Push Network. It is the
+	 * value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
+	 */
+	public String getDeviceToken() {
+		return deviceToken;
+	}
 
-    /**
-     * Device type determines which cloud messaging system will be used by the 
-     * AeroGear Unified Push Server
-     *
-     * Defaults to ANDROID
-     */
-    public String getDeviceType() {
-        return deviceType;
-    }
+	/**
+	 * The device token Identifies the device within its Push Network. It is the
+	 * value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
+	 */
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
 
-    /**
-     * Device type determines which cloud messaging system will be used by the 
-     * AeroGear Unified Push Server.
-     * 
-     * Defaults to ANDROID
-     */
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
-    }
+	/**
+	 * Mobile variant id is the id of the application in Aerogear Push service.
+	 */
+	public String getMobileVariantId() {
+		return mobileVariantId;
+	}
 
-    /**
-     * The name of the operating system.
-     * Defaults to Android
-     */
-    public String getMobileOperatingSystem() {
-        return mobileOperatingSystem;
-    }
+	/**
+	 * Mobile variant id is the id of the application in Aerogear Push service.
+	 */
+	public void setMobileVariantId(String mobileVariantId) {
+		this.mobileVariantId = mobileVariantId;
+	}
 
-    /**
-     * The name of the operating system.
-     * Defaults to Android
-     */
-    public void setMobileOperatingSystem(String mobileOperatingSystem) {
-        this.mobileOperatingSystem = mobileOperatingSystem;
-    }
+	/**
+	 * Device type determines which cloud messaging system will be used by the
+	 * AeroGear Unified Push Server
+	 * 
+	 * Defaults to ANDROID
+	 */
+	public String getDeviceType() {
+		return deviceType;
+	}
 
-    /**
-     * The version of the operating system running. 
-     * 
-     * Defaults to the value provided by android.os.Build.VERSION.RELEASE
-     */
-    public String getOsVersion() {
-        return osVersion;
-    }
+	/**
+	 * Device type determines which cloud messaging system will be used by the
+	 * AeroGear Unified Push Server.
+	 * 
+	 * Defaults to ANDROID
+	 */
+	public void setDeviceType(String deviceType) {
+		this.deviceType = deviceType;
+	}
 
-    /**
-     * The version of the operating system running. 
-     * 
-     * Defaults to the value provided by android.os.Build.VERSION.RELEASE
-     */
-    public void setOsVersion(String osVersion) {
-        this.osVersion = osVersion;
-    }
+	/**
+	 * The name of the operating system. Defaults to Android
+	 */
+	public String getMobileOperatingSystem() {
+		return mobileOperatingSystem;
+	}
 
-    /**
-     * The Alias is an identifier of the user of the system.
-     * 
-     * Examples are an email address or a username
-     * 
-     */
-    public String getAlias() {
-        return alias;
-    }
+	/**
+	 * The name of the operating system. Defaults to Android
+	 */
+	public void setMobileOperatingSystem(String mobileOperatingSystem) {
+		this.mobileOperatingSystem = mobileOperatingSystem;
+	}
 
-    /**
-     * The Alias is an identifier of the user of the system.
-     * 
-     * Examples are an email address or a username
-     * 
-     */
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
+	/**
+	 * The version of the operating system running.
+	 * 
+	 * Defaults to the value provided by android.os.Build.VERSION.RELEASE
+	 */
+	public String getOsVersion() {
+		return osVersion;
+	}
 
-    /**
-     * The category specifies a channel which may be used to send messages
-     */
-    public String getCategory() {
-        return category;
-    }
+	/**
+	 * The version of the operating system running.
+	 * 
+	 * Defaults to the value provided by android.os.Build.VERSION.RELEASE
+	 */
+	public void setOsVersion(String osVersion) {
+		this.osVersion = osVersion;
+	}
 
-    /**
-     * The category specifies a channel which may be used to send messages
-     */
-    public void setCategory(String category) {
-        this.category = category;
-    }
+	/**
+	 * The Alias is an identifier of the user of the system.
+	 * 
+	 * Examples are an email address or a username
+	 * 
+	 */
+	public String getAlias() {
+		return alias;
+	}
 
-    /**
-     * The broadcastReceiver is a class which will be registered as a receiver of Push messages.
-     *  
-     *  It will receive Intents named com.google.android.c2dm.intent.RECEIVE
-     */
+	/**
+	 * The Alias is an identifier of the user of the system.
+	 * 
+	 * Examples are an email address or a username
+	 * 
+	 */
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	/**
+	 * The category specifies a channel which may be used to send messages
+	 */
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * The category specifies a channel which may be used to send messages
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	/**
+	 * The broadcastReceiver is a class which will be registered as a receiver
+	 * of Push messages.
+	 * 
+	 * It will receive Intents named com.google.android.c2dm.intent.RECEIVE
+	 */
 	public Class<? extends BroadcastReceiver> getBroadCastReceiver() {
 		return broadCastReceiver;
 	}
 
 	/**
-     * The broadcastReceiver is a class which will be registered as a receiver of Push messages.
-     *  
-     *  It will receive Intents named com.google.android.c2dm.intent.RECEIVE
-     */
+	 * The broadcastReceiver is a class which will be registered as a receiver
+	 * of Push messages.
+	 * 
+	 * It will receive Intents named com.google.android.c2dm.intent.RECEIVE
+	 */
 	public void setBroadCastReceiver(
 			Class<? extends BroadcastReceiver> broadCastReceiver) {
 		this.broadCastReceiver = broadCastReceiver;
 	}
 
 	/**
-	 * BroadCastReceiverParams represent the constructor params for the BroadcastReceiver
+	 * BroadCastReceiverParams represent the constructor params for the
+	 * BroadcastReceiver
 	 */
 	public Object[] getBroadCastReceiverParams() {
 		return broadCastReceiverParams;
 	}
 
 	/**
-	 * BroadCastReceiverParams represent the constructor params for the BroadcastReceiver
+	 * BroadCastReceiverParams represent the constructor params for the
+	 * BroadcastReceiver
 	 */
 	public void setBroadCastReceiverParams(Object[] broadCastReceiverParams) {
 		this.broadCastReceiverParams = broadCastReceiverParams;
 	}
 
-    
-    
-    
-    
 }
