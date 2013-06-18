@@ -23,19 +23,26 @@ package org.jboss.aerogear.android.unifiedpush;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.http.HeaderAndBody;
 import org.jboss.aerogear.android.http.HttpException;
 import org.jboss.aerogear.android.impl.http.HttpRestProvider;
-import org.jboss.aerogear.android.impl.pipeline.PipeConfig;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -53,7 +60,13 @@ public class Registrar {
 	private static final String PROPERTY_APP_VERSION = "appVersion";
 	private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME = "onServerExpirationTimeMs";
 
-    // Default lifespan (7 days) of a reservation until it is considered expired.
+	private static List<MessageHandler> mainThreadHandlers = new ArrayList<MessageHandler>();
+	private static List<MessageHandler> backgroundThreadHandlers = new ArrayList<MessageHandler>();
+
+	/**
+	 * Default lifespan (7 days) of a reservation until it is considered
+	 * expired.
+	 */
 	public static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7;
 
 	private GoogleCloudMessaging gcm;
@@ -72,50 +85,53 @@ public class Registrar {
                     if (gcm == null) {
 						gcm = GoogleCloudMessaging.getInstance(context);
 					}
+					String regid = getRegistrationId(context);
 
-					String registrationId = getRegistrationId(context);
-					
-					if (registrationId.length() == 0 ) {
-						registrationId = gcm.register(config.senderIds.toArray(new String[] {}));
-						Registrar.this.setRegistrationId(context, registrationId);
+					if (regid.length() == 0) {
+						regid = gcm.register(config.senderIds
+								.toArray(new String[] {}));
+						Registrar.this.setRegistrationId(context, regid);
 					}
 
-					config.setDeviceToken(registrationId);
-					
-					HttpRestProvider provider = new HttpRestProvider(registryURL);
-					provider.setDefaultHeader("ag-mobile-variant", config.getMobileVariantId());
-					Gson gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
-						
-						private final ImmutableSet<String> fields;
+					config.setDeviceToken(regid);
 
-						{
-							fields = ImmutableSet.<String>builder()
-                                    .add("deviceToken")
-                                    .add("deviceType")
-                                    .add("alias")
-                                    .add("mobileOperatingSystem")
-                                    .add("osVersion")
-                                    .build();
-						}
-						
-						@Override
-						public boolean shouldSkipField(FieldAttributes f) {
-				            return !(f.getDeclaringClass() == PushConfig.class && fields.contains(f.getName()));
-						}
-						
-						@Override
-						public boolean shouldSkipClass(Class<?> arg0) {
-							return false;
-						}
-					}).create();
+					HttpRestProvider provider = new HttpRestProvider(
+							registryURL);
+					provider.setDefaultHeader("ag-mobile-variant",
+							config.getMobileVariantId());
+					Gson gson = new GsonBuilder().setExclusionStrategies(
+							new ExclusionStrategy() {
 
+								private final ImmutableSet<String> fields;
+
+								{
+									fields = ImmutableSet.<String> builder()
+											.add("deviceToken")
+											.add("deviceType").add("alias")
+											.add("mobileOperatingSystem")
+											.add("osVersion").build();
+								}
+
+								@Override
+								public boolean shouldSkipField(FieldAttributes f) {
+									return !(f.getDeclaringClass() == PushConfig.class && fields
+											.contains(f.getName()));
+								}
+
+								@Override
+								public boolean shouldSkipClass(Class<?> arg0) {
+									return false;
+								}
+							}).create();
 					try {
-						HeaderAndBody result = provider.post(gson.toJson(config));
+						HeaderAndBody result = provider.post(gson
+								.toJson(config));
+
 						return null;
 					} catch (HttpException ex) {
 						return ex;
 					}
-					
+
 				} catch (IOException ex) {
 					return ex;
 				}
@@ -124,6 +140,42 @@ public class Registrar {
 
 			protected void onPostExecute(Exception result) {
 				if (result == null) {
+					ComponentName component = new ComponentName(context,
+							AGPushMessageReceiver.class);
+					int status = context.getPackageManager()
+							.getComponentEnabledSetting(component);
+					if (status == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT) {
+						try {
+							BroadcastReceiver receiverInstance = null;
+							final IntentFilter filter = new IntentFilter(
+									"com.google.android.c2dm.intent.RECEIVE");
+
+							if (config.getBroadCastReceiverParams() == null) {
+								receiverInstance = config
+										.getBroadCastReceiver().newInstance();
+
+							} else {
+								Object[] params = config
+										.getBroadCastReceiverParams();
+								Class<? extends BroadcastReceiver> receiver = config
+										.getBroadCastReceiver();
+								Class<? extends Object>[] classes = new Class[params.length];
+								for (int i = 0; i < params.length; i++) {
+									classes[i] = params[i].getClass();
+								}
+								receiverInstance = receiver.getConstructor(
+										classes).newInstance(params);
+
+							}
+							context.getApplicationContext().registerReceiver(
+									receiverInstance, filter);
+						} catch (Exception e) {
+							Log.e(TAG, e.getMessage(), e);
+							callback.onFailure(e);
+						}
+
+					}
+
 					callback.onSuccess(null);
 				} else {
 					callback.onFailure(result);
@@ -152,7 +204,8 @@ public class Registrar {
 		// avoid a race condition if GCM sends a message
 		int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
 		int currentVersion = getAppVersion(context);
-		if (registeredVersion != currentVersion || isRegistrationExpired(context)) {
+		if (registeredVersion != currentVersion
+				|| isRegistrationExpired(context)) {
 			Log.v(TAG, "App version changed or registration expired.");
 			return "";
 		}
@@ -199,22 +252,85 @@ public class Registrar {
 	/**
 	 * Stores the registration id, app versionCode, and expiration time in the
 	 * application's {@code SharedPreferences}.
-	 *
-	 * @param context application's context.
-	 * @param regId registration id
+	 * 
+	 * @param context
+	 *            application's context.
+	 * @param regId
+	 *            registration id
 	 */
 	private void setRegistrationId(Context context, String regId) {
-	    final SharedPreferences prefs = getGCMPreferences(context);
-	    int appVersion = getAppVersion(context);
-	    Log.v(TAG, "Saving regId on app version " + appVersion);
-	    SharedPreferences.Editor editor = prefs.edit();
-	    editor.putString(PROPERTY_REG_ID, regId);
-	    editor.putInt(PROPERTY_APP_VERSION, appVersion);
-	    long expirationTime = System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS;
+		final SharedPreferences prefs = getGCMPreferences(context);
+		int appVersion = getAppVersion(context);
+		Log.v(TAG, "Saving regId on app version " + appVersion);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(PROPERTY_REG_ID, regId);
+		editor.putInt(PROPERTY_APP_VERSION, appVersion);
+		long expirationTime = System.currentTimeMillis()
+				+ REGISTRATION_EXPIRY_TIME_MS;
 
-	    Log.v(TAG, "Setting registration expiry time to " + new Timestamp(expirationTime));
-	    editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
-	    editor.commit();
+		Log.v(TAG, "Setting registration expiry time to "
+				+ new Timestamp(expirationTime));
+		editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
+		editor.commit();
 	}
-	
+
+	public static void registerMainThreadHandler(MessageHandler handler) {
+		mainThreadHandlers.add(handler);
+	}
+
+	public static void registerBackgroundThreadHandler(MessageHandler handler) {
+		backgroundThreadHandlers.add(handler);
+	}
+
+	public static void unregisterMainThreadHandler(MessageHandler handler) {
+		mainThreadHandlers.remove(handler);
+	}
+
+	public static void unregisterBackgroundThreadHandler(MessageHandler handler) {
+		backgroundThreadHandlers.remove(handler);
+	}
+
+	protected final static void notifyHandlers(final Context context,
+			final Intent message) {
+
+		for (final MessageHandler handler : backgroundThreadHandlers) {
+			new Thread(new Runnable() {
+				public void run() {
+					
+					GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
+			        String messageType = gcm.getMessageType(message);
+			        if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+			            handler.onError();
+			        } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+			            handler.onDeleteMessage(context, message.getExtras());
+			        } else {
+			        	handler.onMessage(context, message.getExtras());
+			        }
+					
+					
+				}
+			}).start();
+		}
+
+		Looper main = Looper.getMainLooper();
+		
+		for (final MessageHandler handler : mainThreadHandlers) {
+			new Handler(main).post(new Runnable() {
+				
+				@Override
+				public void run() {
+					GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
+			        String messageType = gcm.getMessageType(message);
+			        if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+			            handler.onError();
+			        } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+			            handler.onDeleteMessage(context, message.getExtras());
+			        } else {
+			        	handler.onMessage(context, message.getExtras());
+			        }
+				}
+			});
+		} 
+		
+	}
 }

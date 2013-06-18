@@ -16,48 +16,20 @@
  */
 package org.jboss.aerogear.android.unifiedpush;
 
-import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import org.jboss.aerogear.R;
+
 
 public class AGPushMessageReceiver  extends BroadcastReceiver {
 
     public static final int NOTIFICATION_ID = 1;
-
-    private NotificationManager mNotificationManager;
-    private Context ctx;
-
+    public static Intent configIntent;
+    
+    Context ctx;
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent i = new Intent(context, AGMessageIntentService.class);
-        i.fillIn(intent, Intent.FILL_IN_DATA);
-        context.startService(i);
-        setResultCode(Activity.RESULT_OK);
+    	Registrar.notifyHandlers(context, intent);
     }
-
-    // Put the GCM message into a notification and post it.
-    private void sendNotification(String msg) {
-        if(msg == null) { return; }
-
-        mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx)
-                // TODO Configurable title
-                .setContentTitle("GCM Notification")
-                // TODO Configurable icon
-                .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
-                // TODO Change to received sound
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                .setContentText(msg);
-
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-    }
-
+        
 }
