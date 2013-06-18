@@ -50,6 +50,8 @@ public class AGPushMessageReceiver  extends BroadcastReceiver {
 
     // Put the GCM message into a notification and post it.
     private void sendNotification(String msg) {
+        if(msg == null) { return; }
+
         mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx)
