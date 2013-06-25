@@ -17,19 +17,64 @@
 package org.jboss.aerogear.android.unifiedpush;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AGPushMessageReceiver extends BroadcastReceiver {
 
-	public static final int NOTIFICATION_ID = 1;
-	public static Intent configIntent;
+    public static final int NOTIFICATION_ID = 1;
 
-	Context ctx;
+    private static MessageHandler defaultHandler;
+    private static boolean checkDefaultHandler = true;
+    private static final String TAG = AGPushMessageReceiver.class.getSimpleName();
+    public static final String DEFAULT_MESSAGE_HANDLER_KEY = "DEFAULT_MESSAGE_HANDLER_KEY";
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		Registrar.notifyHandlers(context, intent);
-	}
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+        if (checkDefaultHandler) {
+            checkDefaultHandler = false;
+            Bundle metaData = getMetadata(context);
+            if (metaData != null) {
+
+                String defaultHandlerClassName = metaData.getString(DEFAULT_MESSAGE_HANDLER_KEY);
+                if (defaultHandlerClassName != null) {
+                    try {
+                        Class<? extends MessageHandler> defaultHandlerClass = (Class<? extends MessageHandler>) Class.forName(defaultHandlerClassName);
+                        defaultHandler = defaultHandlerClass.newInstance();
+                    } catch (Exception ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                    }
+
+                }
+            }
+        }
+
+        Registrar.notifyHandlers(context, intent, defaultHandler);
+    }
+
+    private Bundle getMetadata(Context context) {
+        final ComponentName componentName = new ComponentName(context, AGPushMessageReceiver.class);
+        try {
+            ActivityInfo ai = context.getPackageManager().getReceiverInfo(componentName, PackageManager.GET_ACTIVITIES | PackageManager.GET_META_DATA);
+            Bundle metaData = ai.metaData;
+            if (metaData == null) {
+                Log.d(TAG, "metaData is null. Unable to get meta data for " + componentName);
+            } else {
+                return metaData;
+            }
+        } catch (PackageManager.NameNotFoundException ex) {
+            Log.e(TAG, ex.getMessage(), ex);
+        }
+        return null;
+
+    }
 
 }

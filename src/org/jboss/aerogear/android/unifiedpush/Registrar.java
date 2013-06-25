@@ -288,9 +288,26 @@ public class Registrar {
         backgroundThreadHandlers.remove(handler);
     }
 
-    protected final static void notifyHandlers(final Context context,
-            final Intent message) {
+    static void notifyHandlers(final Context context, final Intent message, final MessageHandler defaultHandler) {
+        
+        if (backgroundThreadHandlers.isEmpty() && mainThreadHandlers.isEmpty()) {
+            new Thread(new Runnable() {
+                public void run() {
 
+                    GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
+                    String messageType = gcm.getMessageType(message);
+                    if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+                        defaultHandler.onError();
+                    } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
+                        defaultHandler.onDeleteMessage(context, message.getExtras());
+                    } else {
+                        defaultHandler.onMessage(context, message.getExtras());
+                    }
+
+                }
+            }).start();
+        }
+        
         for (final MessageHandler handler : backgroundThreadHandlers) {
             new Thread(new Runnable() {
                 public void run() {
@@ -328,6 +345,10 @@ public class Registrar {
                 }
             });
         }
-
+    }
+    
+    protected static void notifyHandlers(final Context context,
+            final Intent message) {
+        notifyHandlers(context, message, null);
     }
 }
