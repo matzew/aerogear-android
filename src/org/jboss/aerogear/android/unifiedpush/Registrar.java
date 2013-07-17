@@ -95,7 +95,7 @@ public class Registrar {
                     config.setDeviceToken(regid);
 
                     HttpRestProvider provider = new HttpRestProvider(registryURL);
-                    provider.setPasswordAuthentication(config.getMobileVariantId(), config.getMobileSecret());
+                    provider.setPasswordAuthentication(config.getVariantID(), config.getSecret());
 
                     Gson gson = new GsonBuilder().setExclusionStrategies(
                             new ExclusionStrategy() {
