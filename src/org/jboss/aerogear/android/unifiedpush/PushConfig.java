@@ -59,15 +59,19 @@ public class PushConfig implements Serializable {
 		this.deviceToken = deviceToken;
 	}
 
-	/**
-	 * Mobile variant id is the id of the application in Aerogear Push service.
-	 */
+    /**
+     * ID of the Variant from the AeroGear UnifiedPush Server.
+     *
+     * @return
+     */
 	public String getVariantID() {
 		return variantID;
 	}
 
     /**
-     * Mobile variant id is the id of the application in Aerogear Push service.
+     * ID of the Variant from the AeroGear UnifiedPush Server.
+     *
+     * @param variantID
      */
     public void setVariantID(String variantID) {
         this.variantID = variantID;
