@@ -69,5 +69,9 @@ public class HttpStubProvider implements HttpProvider {
     public HeaderAndBody put(String id, byte[] data) throws HttpException {
         return response;
     }
+    
+    @Override
+    public void setPasswordAuthentication(String username, String password) {
+    }
 
 }

@@ -94,10 +94,9 @@ public class Registrar {
 
                     config.setDeviceToken(regid);
 
-                    HttpRestProvider provider = new HttpRestProvider(
-                            registryURL);
-                    provider.setDefaultHeader("ag-mobile-variant",
-                            config.getMobileVariantId());
+                    HttpRestProvider provider = new HttpRestProvider(registryURL);
+                    provider.setPasswordAuthentication(config.getMobileVariantId(), config.getMobileSecret());
+
                     Gson gson = new GsonBuilder().setExclusionStrategies(
                             new ExclusionStrategy() {
 

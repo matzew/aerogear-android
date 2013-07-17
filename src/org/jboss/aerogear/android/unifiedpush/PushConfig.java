@@ -28,6 +28,7 @@ public class PushConfig implements Serializable {
 
 	private String deviceToken;
 	private String mobileVariantId;
+    private String mobileSecret;
 	private String deviceType = "ANDROID";
 	private String mobileOperatingSystem = "android";
 	private String osVersion = android.os.Build.VERSION.RELEASE;
@@ -72,7 +73,26 @@ public class PushConfig implements Serializable {
 		this.mobileVariantId = mobileVariantId;
 	}
 
-	/**
+    /**
+     * Mobile secret of the application in Aerogear Push service.
+     *
+     * @return
+     */
+    public String getMobileSecret() {
+        return mobileSecret;
+    }
+
+    /**
+     * Mobile secret of the application in Aerogear Push service.
+     *
+     * @param mobileSecret
+     */
+
+    public void setMobileSecret(String mobileSecret) {
+        this.mobileSecret = mobileSecret;
+    }
+
+    /**
 	 * Device type determines which cloud messaging system will be used by the
 	 * AeroGear Unified Push Server
 	 * 

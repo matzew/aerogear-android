@@ -21,9 +21,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -260,6 +258,15 @@ public final class HttpRestProvider implements HttpProvider {
     @Override
     public void setDefaultHeader(String headerName, String headerValue) {
         defaultHeaders.put(headerName, headerValue);
+    }
+
+    @Override
+    public void setPasswordAuthentication(final String username, final String password) {
+        Authenticator.setDefault(new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password.toCharArray());
+            }
+        });
     }
 
     private HeaderAndBody getHeaderAndBody(HttpURLConnection urlConnection)
