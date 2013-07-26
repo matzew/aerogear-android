@@ -177,7 +177,7 @@
         <dependency>
             <groupId>android.support</groupId>
             <artifactId>compatibility-v4</artifactId>
-            <version>13</version>
+            <version>18</version>
         </dependency>
 
         <!-- Gson: Java to Json conversion -->
@@ -218,13 +218,13 @@
         <dependency>
             <groupId>com.google.android.gms</groupId>
             <artifactId>google-play-services</artifactId>
-            <version>7</version>
+            <version>9</version>
             <type>apklib</type>
         </dependency>
         <dependency>
             <groupId>com.google.android.gms</groupId>
             <artifactId>google-play-services</artifactId>
-            <version>7</version>
+            <version>9</version>
             <type>jar</type>
         </dependency>
     </dependencies>
