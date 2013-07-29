@@ -18,44 +18,43 @@ package org.jboss.aerogear.android.unifiedpush;
 
 import java.io.Serializable;
 
-import android.content.BroadcastReceiver;
 
 import com.google.common.collect.ImmutableSet;
 
 public class PushConfig implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String deviceToken;
-	private String variantID;
+    private String deviceToken;
+    private String variantID;
     private String secret;
-	private String deviceType = "ANDROID";
-	private String mobileOperatingSystem = "android";
-	private String osVersion = android.os.Build.VERSION.RELEASE;
-	private String alias;
-	private String category;
-	
-	public final ImmutableSet<String> senderIds;
+    private String deviceType = "ANDROID";
+    private String mobileOperatingSystem = "android";
+    private String osVersion = android.os.Build.VERSION.RELEASE;
+    private String alias;
+    private String category;
 
-	public PushConfig(String... senderId) {
-		senderIds = ImmutableSet.copyOf(senderId);
-	}
+    public final ImmutableSet<String> senderIds;
 
-	/**
-	 * The device token Identifies the device within its Push Network. It is the
-	 * value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
-	 */
-	public String getDeviceToken() {
-		return deviceToken;
-	}
+    public PushConfig(String... senderId) {
+            senderIds = ImmutableSet.copyOf(senderId);
+    }
 
-	/**
-	 * The device token Identifies the device within its Push Network. It is the
-	 * value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
-	 */
-	public void setDeviceToken(String deviceToken) {
-		this.deviceToken = deviceToken;
-	}
+    /**
+     * The device token Identifies the device within its Push Network. It is the
+     * value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
+     */
+    public String getDeviceToken() {
+            return deviceToken;
+    }
+
+    /**
+     * The device token Identifies the device within its Push Network. It is the
+     * value = GoogleCloudMessaging.getInstance(context).register(SENDER_ID);
+     */
+    public void setDeviceToken(String deviceToken) {
+            this.deviceToken = deviceToken;
+    }
 
     /**
      * ID of the Variant from the AeroGear UnifiedPush Server.

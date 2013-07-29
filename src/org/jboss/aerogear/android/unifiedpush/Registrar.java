@@ -30,14 +30,10 @@ import org.jboss.aerogear.android.Callback;
 import org.jboss.aerogear.android.http.HttpException;
 import org.jboss.aerogear.android.impl.http.HttpRestProvider;
 
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Handler;

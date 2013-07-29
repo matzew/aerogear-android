@@ -24,8 +24,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AGPushMessageReceiver extends BroadcastReceiver {
 
