@@ -25,15 +25,24 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
-public class AGPushMessageReceiver extends BroadcastReceiver {
+/**
+ * <p> AeroGear specific <code>BroadcastReceiver</code> implementation for Google Cloud Messaging.
+ *
+ * <p> Internally received messages are delivered to attached implementations of our <code>MessageHandler</code> interface.
+ */
+public class AeroGearGCMMessageReceiver extends BroadcastReceiver {
 
     public static final int NOTIFICATION_ID = 1;
 
     private static MessageHandler defaultHandler;
     private static boolean checkDefaultHandler = true;
-    private static final String TAG = AGPushMessageReceiver.class.getSimpleName();
+    private static final String TAG = AeroGearGCMMessageReceiver.class.getSimpleName();
     public static final String DEFAULT_MESSAGE_HANDLER_KEY = "DEFAULT_MESSAGE_HANDLER_KEY";
 
+    /**
+	 * When a GCM message is received, the attached implementations of our <code>MessageHandler</code> interface 
+     * are being notified.
+	 */
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -55,11 +64,12 @@ public class AGPushMessageReceiver extends BroadcastReceiver {
             }
         }
 
+        // notity all attached MessageHandler implementations:
         Registrar.notifyHandlers(context, intent, defaultHandler);
     }
 
     private Bundle getMetadata(Context context) {
-        final ComponentName componentName = new ComponentName(context, AGPushMessageReceiver.class);
+        final ComponentName componentName = new ComponentName(context, AeroGearGCMMessageReceiver.class);
         try {
             ActivityInfo ai = context.getPackageManager().getReceiverInfo(componentName, PackageManager.GET_ACTIVITIES | PackageManager.GET_META_DATA);
             Bundle metaData = ai.metaData;
