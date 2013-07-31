@@ -29,7 +29,7 @@ public class PushConfig implements Serializable {
     private String variantID;
     private String secret;
     private String deviceType = "ANDROID";
-    private String mobileOperatingSystem = "android";
+    private String operatingSystem = "android";
     private String osVersion = android.os.Build.VERSION.RELEASE;
     private String alias;
     private String category;
@@ -115,15 +115,15 @@ public class PushConfig implements Serializable {
 	/**
 	 * The name of the operating system. Defaults to Android
 	 */
-	public String getMobileOperatingSystem() {
-		return mobileOperatingSystem;
+	public String getOperatingSystem() {
+		return operatingSystem;
 	}
 
 	/**
 	 * The name of the operating system. Defaults to Android
 	 */
-	public void setMobileOperatingSystem(String mobileOperatingSystem) {
-		this.mobileOperatingSystem = mobileOperatingSystem;
+	public void setOperatingSystem(String operatingSystem) {
+		this.operatingSystem = operatingSystem;
 	}
 
 	/**

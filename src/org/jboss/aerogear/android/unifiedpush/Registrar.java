@@ -98,7 +98,7 @@ public class Registrar {
                             fields = ImmutableSet.<String>builder()
                                     .add("deviceToken")
                                     .add("deviceType").add("alias")
-                                    .add("mobileOperatingSystem")
+                                    .add("operatingSystem")
                                     .add("osVersion").build();
                         }
 
