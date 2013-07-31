@@ -40,9 +40,9 @@ public class AeroGearGCMMessageReceiver extends BroadcastReceiver {
     public static final String DEFAULT_MESSAGE_HANDLER_KEY = "DEFAULT_MESSAGE_HANDLER_KEY";
 
     /**
-	 * When a GCM message is received, the attached implementations of our <code>MessageHandler</code> interface 
+     * When a GCM message is received, the attached implementations of our <code>MessageHandler</code> interface 
      * are being notified.
-	 */
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
 
